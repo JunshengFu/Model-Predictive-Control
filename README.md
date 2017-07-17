@@ -56,7 +56,7 @@ into the future.  N and dt are hyperparameters you will need to tune for each mo
 However, there are some general guidelines: T should be as large as possible, while dt should be as small as possible.
 These guidelines create tradeoffs.
 
-These following dt has been tested 0.3, 0.12, 0.1, 0.08, and I found that the dt should be less than the
+These following dt has been tested 0.3, 0.12, 0.1, 0.08, and I found that the dt should be greater than the
  latency in order to make the MPC work. So, I choose 0.12 as dt in the end.
 
 The goal of Model Predictive Control is to optimize the control inputs: [δ,a]. An optimizer will tune these inputs 
