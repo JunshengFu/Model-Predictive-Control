@@ -19,8 +19,6 @@ A **max speed** of **90** MPH is achieved in this project.
 
 ### 2. System in brief
 
-- **The Model**: *Student describes their model in detail. This includes the state, actuators and update 
-equations.*
 
 #### 2.1 Kinematic model
 
