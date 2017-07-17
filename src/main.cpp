@@ -103,24 +103,13 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
-
-
-          // v = v * 0.447;
-
-          // predict into the future at latency time
-          // double delta = j[1]["steering_angle"];
-          // double acceleration = j[1]["throttle"];
-          //double latency = 0.1;
-          //px = px + v*cos(psi)*latency;
-          //py = py + v*sin(psi)*latency;
-          //psi = psi + v*delta/2.67*latency;
-          //v = v + acceleration*latency;
+          double steer_angle = j[1]["steering_angle"];
+          double acceleration = j[1]["throttle"];
 
           /*
-          * TODO: Calculate steeering angle and throttle using MPC.
+          * Calculate steeering angle and throttle using MPC.
           *
           * Both are in between [-1, 1].
-          *
           */
           // convert from map coordinate to car coordinate
           Eigen::VectorXd ptsx_car(ptsx.size());
@@ -131,10 +120,18 @@ int main() {
           auto coeffs = polyfit(ptsx_car, ptsy_car, 3); // 3rd order line fitting
 
           // state in car coordniates
-          Eigen::VectorXd state(6);
-          double cte = polyeval(coeffs, 0.0); // x = 0
-          double epsi = -atan(coeffs[1]);
-          state << 0.0, 0.0, 0.0, v, cte, epsi;
+          Eigen::VectorXd state(6); // {x, y, psi, v, cte, epsi}
+
+          // add latency 100ms
+          double latency = 0.1;
+          double Lf = 2.67;
+          v *= 0.44704;  // convert from mph to m/s
+          px = 0 + v * cos(steer_angle) * latency;           // px:  px0 = 0, due to the car coordinate system
+          py = 0 + v * sin(steer_angle) * latency;           // py:  py0 = 0, due to the car coordinate system
+          psi = - v / Lf * steer_angle * latency;  // psi:  psi0 = 0, due to the car coordinate system
+          double cte = polyeval(coeffs, px);
+          double epsi = atan(coeffs[1]+2*coeffs[2]*px + 3*coeffs[3]*px*px);
+          state << px, py, psi, v, cte, epsi;
 
 
           // call MPC solver

@@ -10,7 +10,7 @@ using CppAD::AD;
 // The delta_t is purposely choose to be the same as the latency 0.1s.
 
 size_t N = 10;
-double dt = 0.1;
+double dt = 0.12;  //tested with 0.3, 0.12, 0.1, 0.08
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -25,7 +25,7 @@ double dt = 0.1;
 const double Lf = 2.67;
 
 // Reference velocity
-double ref_v = 100;
+double ref_v = 80 * 0.447; // convert from mph to m/s
 
 // The solver takes all the state variables and actuator
 // variables in a singular vector. Thus, we should to establish
@@ -58,21 +58,21 @@ public:
     // cost based on the state
     size_t i;
     for (i = 0; i < N; ++i) {
-      fg[0] += 3000 * CppAD::pow(vars[cte_start + i], 2);
+      fg[0] += 100 * CppAD::pow(vars[cte_start + i], 2);
       fg[0] += CppAD::pow(vars[epsi_start + i], 2);
       fg[0] += CppAD::pow(vars[v_start+ i] - ref_v, 2);
     }
 
     // cost based on the actuator values
     for (i = 0; i < N - 1; ++i) {
-      fg[0] += 100000 * CppAD::pow(vars[delta_start + i], 2);
-      fg[0] += CppAD::pow(vars[a_start], 2);
+      fg[0] += 100 * CppAD::pow(vars[delta_start + i], 2);
+      fg[0] += CppAD::pow(vars[a_start + i], 2);
     }
 
     // cost based on the sequential value
     for (i = 0; i < N - 2; ++i) {
-      fg[0] += 800 *CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
-      fg[0] += CppAD::pow(vars[a_start + i +1] - vars[a_start], 2);
+      fg[0] += 100 *CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
+      fg[0] += CppAD::pow(vars[a_start + i +1] - vars[a_start + i], 2);
     }
 
 
@@ -137,7 +137,6 @@ MPC::MPC() {
 MPC::~MPC() {}
 
 vector<double> MPC::Solve(Eigen::VectorXd x0, Eigen::VectorXd coeffs) {
-  bool ok = true;
 
   typedef CPPAD_TESTVECTOR(double) Dvector;
 
@@ -243,13 +242,16 @@ vector<double> MPC::Solve(Eigen::VectorXd x0, Eigen::VectorXd coeffs) {
     constraints_upperbound, fg_eval, solution);
 
   // Check some of the solution values
+  bool ok = true;
   ok &= solution.status == CppAD::ipopt::solve_result<Dvector>::success;
 
   // Cost
   //auto cost = solution.obj_value;
 
   // Return the first actuator values
-  vector<double> ouputs = {solution.x[delta_start], solution.x[a_start]};
+  double steering = solution.x[delta_start];
+  double acceleration = solution.x[a_start];
+  vector<double> ouputs = {steering, acceleration};
 
   // attach the predicted route to display
   for (i=0; i<N; i++) {

@@ -31,9 +31,9 @@ of the models, but it also makes them more tractable.
 * x: cars x position
 * y: cars y position
 * ψ (psi): vehicle's angle in radians from the x-direction (radians)
-* ν : vehicle's velocity
-* δ (delta): steering angle
-* a : acceleration
+* ν: vehicle's velocity
+* cte: cross track error
+* eψ : orientation error
 
 **Actuator values**
 
@@ -47,20 +47,35 @@ of the models, but it also makes them more tractable.
 #### 2.2 Timestep Length and Elapsed Duration (N & dt)
 
 * N = 10
-* dt = 0.1 s
+* dt = 0.1 s  // tested with 0.3, 0.12, 0.1, 0.08s
 
-N*dt should not be more than a few seconds for real-life self-driving car, and dt is setted as same as the delay (100ms),
-which we can apply a easy trick in the handle latency processing. 
+The prediction horizon is the duration over which future predictions are made. We’ll refer to this as T.
+T is the product of two other variables, T =  N * dt. In the case of driving a car, T should be a few seconds, 
+at most. Beyond that horizon, the environment will change enough that it won't make sense to predict any further 
+into the future.  N and dt are hyperparameters you will need to tune for each model predictive controller you build. 
+However, there are some general guidelines: T should be as large as possible, while dt should be as small as possible.
+These guidelines create tradeoffs.
+
+These following dt has been tested 0.3, 0.12, 0.1, 0.08, and I found that the dt should be less than the
+ latency in order to make the MPC work. So, I choose 0.12 as dt in the end.
+
+The goal of Model Predictive Control is to optimize the control inputs: [δ,a]. An optimizer will tune these inputs 
+until a low cost vector of control inputs is found. 
+
 
 #### 2.3 Polynomial Fitting and MPC Preprocessing
 
 Since the reference waypoints are given in the map global coordinate, and I transfer them into the car's coordinate
-by a funciton called `map2car` (see line 128 in main.cpp), then a 3rd order polynomial is fitted to waypoints. 
+by a funciton called `map2car` (see line 117 in `main.cpp`), then a 3rd order polynomial is fitted to waypoints. 
 
 #### 2.4 Model Predictive Control with Latency
 
-100 millisecond latency should be handled by Model Predictive Control. Since the dt is also 100ms, therefore
-we could simple "shift the state" by 1 when we are computing the constrains (see line 121-126 in `MPC.cpp`).
+In a real car, an actuation command won't execute instantly - there will be a delay as the command propagates 
+through the system. A realistic delay might be on the order of 100 milliseconds, so in this project 100 millisecond 
+latency is handled by Model Predictive Controller. 
+
+The latency is handled by using kinematic equations to predict the states for after 100ms before sending them to MPC 
+(see code in line 126-134 in `main.cpp`).
 
 ---
 
