@@ -8,7 +8,7 @@ to drive the car. The solution must be robust to 100ms latency, since it might e
 In this project, the MPC optimize the actuators (steering and throttle), simulate 
 the vehicle trajactory, and minimize the cost like cross-track error.
 
-A **max speed** of **90** MPH is achieved in this project.
+A **max speed** of **80** MPH is achieved in this project.
 
 
 #### Demo: Autonomous driving with MPC (click to see the full video)
