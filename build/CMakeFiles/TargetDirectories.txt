@@ -1,3 +1,0 @@
-/home/junsheng/code/github/SDC/Model-Predictive-Control/build/CMakeFiles/rebuild_cache.dir
-/home/junsheng/code/github/SDC/Model-Predictive-Control/build/CMakeFiles/edit_cache.dir
-/home/junsheng/code/github/SDC/Model-Predictive-Control/build/CMakeFiles/mpc.dir
