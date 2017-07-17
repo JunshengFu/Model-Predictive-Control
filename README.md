@@ -104,7 +104,7 @@ select the MPC Controller.
 ### 3. My project files
 
 * [CMakeLists.txt](CMakeLists.txt) is the cmake file.
-* [data](data) folder contains GIFs. 
+* [data](data) folder contains gif,fig, waypoints data. 
 * [src](src) folder contains the source code.
 * [clean.sh](clean.sh) cleans the project.
 * [build.sh](build.sh) builds the project.
