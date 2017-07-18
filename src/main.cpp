@@ -89,7 +89,7 @@ int main() {
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
     string sdata = string(data).substr(0, length);
-    cout << sdata << endl;
+//    cout << sdata << endl;
     if (sdata.size() > 2 && sdata[0] == '4' && sdata[1] == '2') {
       string s = hasData(sdata);
       if (s != "") {
@@ -103,8 +103,8 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
-          double steer_angle = j[1]["steering_angle"];
-          //double acceleration = j[1]["throttle"];
+          double steer_angle = j[1]["steering_angle"];  // steering angle is in the opposite direction
+          double acceleration = j[1]["throttle"];
 
           /*
           * Calculate steeering angle and throttle using MPC.
@@ -125,13 +125,26 @@ int main() {
           // add latency 100ms
           double latency = 0.1;
           double Lf = 2.67;
-          v *= 0.44704;  // convert from mph to m/s
-          px = 0 + v * cos(steer_angle) * latency;           // px:  px0 = 0, due to the car coordinate system
-          py = 0 + v * sin(steer_angle) * latency;           // py:  py0 = 0, due to the car coordinate system
-          psi = - v / Lf * steer_angle * latency;  // psi:  psi0 = 0, due to the car coordinate system
-          double cte = polyeval(coeffs, px);
-          double epsi = atan(coeffs[1]+2*coeffs[2]*px + 3*coeffs[3]*px*px);
+          v *= 0.44704;                             // convert from mph to m/s
+          px = 0 + v * cos(0) * latency;            // px:  px0 = 0, due to the car coordinate system
+          py = 0 + v * sin(0) * latency;;           // py:  psi=0 and y is point to the left of the car
+          psi = 0 - v / Lf * steer_angle * latency;   // psi:  psi0 = 0, due to the car coordinate system
+          double epsi = 0 - atan(coeffs[1]) - v / Lf * steer_angle * latency;
+          double cte = polyeval(coeffs, 0) - 0 + v * sin(0- atan(coeffs[1])) * latency;
+          v += acceleration * latency;
           state << px, py, psi, v, cte, epsi;
+
+
+//          double latency = 0.1;
+//          double Lf = 2.67;
+//          v *= 0.44704;                             // convert from mph to m/s
+//          px = 0 + v * cos(steer_angle) * latency;  // px:  px0 = 0, due to the car coordinate system
+//          py = 0 + v * sin(steer_angle) * latency;  // py:  py0 = 0, due to the car coordinate system
+//          psi = - v / Lf * steer_angle * latency;   // psi:  psi0 = 0, due to the car coordinate system
+//          double cte = polyeval(coeffs, px);
+//          double epsi = atan(coeffs[1]+2*coeffs[2]*px + 3*coeffs[3]*px*px);
+//          state << px, py, psi, v, cte, epsi;
+
 
 
           // call MPC solver

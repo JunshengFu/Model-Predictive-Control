@@ -25,7 +25,7 @@ double dt = 0.12;  //tested with 0.3, 0.12, 0.1, 0.08
 const double Lf = 2.67;
 
 // Reference velocity
-double ref_v = 80 * 0.447; // convert from mph to m/s
+double ref_v = 84 * 0.447; // convert from mph to m/s
 
 // The solver takes all the state variables and actuator
 // variables in a singular vector. Thus, we should to establish
