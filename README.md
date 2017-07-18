@@ -47,7 +47,7 @@ of the models, but it also makes them more tractable.
 #### 2.2 Timestep Length and Elapsed Duration (N & dt)
 
 * N = 10
-* dt = 0.1 s  // tested with 0.3, 0.12, 0.1, 0.08s
+* dt = 0.12 s  // tested with 0.3, 0.12, 0.1, 0.08s
 
 The prediction horizon is the duration over which future predictions are made. We’ll refer to this as T.
 T is the product of two other variables, T =  N * dt. In the case of driving a car, T should be a few seconds, 
