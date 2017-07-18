@@ -13,7 +13,7 @@ A **max speed** of **80** MPH is achieved in this project.
 
 #### Demo: Autonomous driving with MPC (click to see the full video)
 
-[![demo_gif1][gif1]](https://youtu.be/Wvh47LKYwuQ)
+[![demo_gif1][gif1]](https://youtu.be/0l2K9EZ862U)
 
 ---
 
@@ -134,6 +134,11 @@ select the MPC Controller.
 
 
 ### 5. Release History
+
+* 0.1.2
+    * Fix two bugs in handling 100ms latency processing
+    * Update the documentation 
+    * Date 18 July 2017
 
 * 0.1.1
     * Add bash files and demos
